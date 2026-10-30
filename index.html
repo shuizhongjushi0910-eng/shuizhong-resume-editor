@@ -910,7 +910,8 @@ body .paper[data-density="smart"] .widget-timeline .widget-item { padding:var(--
 .form-back[hidden] { display:none!important; }
 .page-content > [data-block] { position:relative; }
 .page-delete-block { position:absolute; right:-9mm; top:0; z-index:2; width:6mm; height:6mm; line-height:1; padding:0; border:1px solid #e7c7c5; border-radius:50%; background:#fff; color:#b04e48; font:17px Arial,sans-serif; cursor:pointer; opacity:0; pointer-events:none; }
-.page-content > [data-block]:hover > .page-delete-block,.page-content > .is-selected > .page-delete-block,.page-delete-block:focus-visible { opacity:1; pointer-events:auto; }
+.page-content > .is-selected > .page-delete-block { opacity:1; pointer-events:auto; visibility:visible; }
+.page-content > [data-block]:not(.is-selected) > .page-delete-block { visibility:hidden; }
 .page-delete-block:hover { background:#b04e48; border-color:#b04e48; color:#fff; }
 .exporting .page-delete-block { display:none!important; }
 .paper .template-languages { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:2mm 4mm; }
@@ -1110,6 +1111,8 @@ body[data-theme="teal"]{--accent:#246d64;--accent-dark:#234b46;--accent-soft:#ed
 .typography-sample[data-font="kai"]{font-family:"KaiTi","STKaiti",serif;font-weight:700;}
 .typography-options>p{font-size:11px;color:#7b8982;line-height:1.6;margin:4px 0;}
 .tool-button[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent);}
+[data-command="bold"]{font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:700;min-width:34px;}
+[data-command="bold"][aria-pressed="true"]{background:var(--accent);color:white;border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);}
 
 </style>
 <style>
@@ -1124,7 +1127,7 @@ body{background:#eeefeb;}
 .appbar .toolset{display:flex;align-items:center;flex-wrap:wrap;gap:3px;padding:4px;background:#edf1ec;border:1px solid #e3e8e0;border-radius:9px;}
 .appbar .tool-button{height:31px;min-width:31px;padding:0 8px;border:1px solid transparent;border-radius:5px;background:transparent;font-size:11px;color:#526358;}
 .appbar .tool-button:hover{background:#fff;color:var(--accent-dark);border-color:#dbe4db;}
-.appbar .tool-button[aria-pressed="true"]{background:#fff;border-color:var(--accent);color:var(--accent-dark);}
+.appbar .tool-button[aria-pressed="true"]{background:var(--accent-dark);border-color:var(--accent-dark);color:#fff;}
 .appbar .tool-button[data-command="bold"]{font-family:Georgia,serif;font-size:17px;}
 .appbar .tool-button[data-command="redo"]{margin-right:5px;}
 .appbar .tool-button[data-command="removeFormat"]{border-left-color:#d7dfd6;border-radius:0 5px 5px 0;}
@@ -1137,7 +1140,7 @@ body{background:#eeefeb;}
 .editor-layout{grid-template-columns:296px minmax(0,1fr);}
 .editor-sidebar{margin:22px 0 24px 20px;top:90px;max-height:calc(100vh - 112px);padding:18px 16px;border:1px solid #dce3d9;border-radius:10px;background:#fafbf8;box-shadow:0 4px 24px #29453104;scrollbar-gutter:stable;}
 .editor-sidebar>.side-heading{font-size:15px;color:#354c3e;letter-spacing:.04em;margin-bottom:8px;}
-.editor-sidebar>.side-caption{font-size:11px;line-height:1.8;color:#7c8c80;margin-bottom:18px;}
+.editor-sidebar>.side-caption,.smart-fit-hint{display:none;}
 .editor-sidebar .side-label{font-size:11px;letter-spacing:.05em;color:#8a968b;margin-top:18px;}
 .editor-sidebar select{height:37px;padding:7px 9px;background:#fff;border-color:#dce5d9;font-size:12px;}
 .editor-sidebar .block-list{gap:5px;margin:9px 0;}
@@ -1213,6 +1216,24 @@ body{background:#eeefeb;}
 @media(prefers-reduced-motion:reduce){.library-card{transition:none!important;}}
 
 </style>
+<style>
+/* Compact, accessible editing chrome. Resume content and exported pages are untouched. */
+.editor-icon{display:block;width:19px;height:19px;flex:0 0 auto;pointer-events:none;}
+.editor-icon-button,.editor-labelled-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+.editor-labelled-button>span{pointer-events:none;}
+.appbar .editor-icon-button{width:34px;min-width:34px;padding:0;}
+.appbar .actions .editor-icon-button{width:36px;min-width:36px;padding:0;}
+.appbar .tool-button.editor-icon-button:hover{background:#fff;}
+.appbar .editor-icon-button:disabled{opacity:.35;cursor:default;}
+.appbar #resetButton.editor-icon-button:hover{color:var(--accent-dark);background:var(--accent-soft);}
+.photo-panel .panel-close.editor-icon-button{width:30px;height:30px;min-width:30px;padding:0;flex:0 0 auto;}
+.editor-sidebar .editor-labelled-button .editor-icon{width:17px;height:17px;}
+.editor-sidebar .appearance-open-preview.editor-labelled-button{width:100%;}
+.editor-sidebar .smart-fit-hint,.editor-sidebar>.side-caption{display:none;}
+.dialog-kicker,.content-dialog .template-note{display:none;}
+@media(max-width:720px){.appbar .tool-button.editor-icon-button{width:32px;min-width:32px;padding:0;}.appbar .editor-icon{width:18px;height:18px;}.appbar #resetButton.editor-icon-button{display:inline-flex;}}
+
+</style>
 <style id="default-template-style">
 /* One content axis, consistent dates, and a quiet editorial masthead. */
 .paper[data-layout="classic"]{border:0;padding:13mm 14mm 12mm;--ink:#253632;--muted:#6b7873;}
@@ -1267,7 +1288,6 @@ body{background:#eeefeb;}
 .document-meta>span:last-child{font-size:10px;color:#8a9690;}
 
 </style>
-<meta name="description" content="在线编辑 A4 简历，支持拖拽排版、证件照裁切、智能一页与直接下载 PDF。草稿保存在各自浏览器中。">
 </head>
 <body>
   <header class="appbar" aria-label="简历编辑工具栏">
@@ -1495,7 +1515,7 @@ body{background:#eeefeb;}
       if (legacy?.html) { const root=document.createElement('div'); root.innerHTML=legacy.html; state=migrate(root,legacy.photo); }
     }
   } catch { status('已载入简历，原有本机备份仍保留'); }
-  let selectedBlock = state.blocks[0]?.id;
+  let selectedBlock = null;
   let fields = new Map();
   let activeField = null;
   let savedRange = null;
@@ -1505,7 +1525,6 @@ body{background:#eeefeb;}
 
   $('.workspace').outerHTML = `<div class="editor-layout"><aside class="editor-sidebar" aria-label="板块与排版设置">
     <h2 class="side-heading">编排简历 <span style="font-size:10px;font-weight:400;color:#8a9690">A4</span></h2>
-    <p class="side-caption">拖动 ⋮⋮ 调整板块顺序。<br>示例内容可直接替换，增删后自动排列。</p>
     <label class="side-label" for="themeSelect">简历风格</label><select id="themeSelect"><option value="teal">青绿 · 清晰专业</option><option value="blue">雾蓝 · 商务简洁</option><option value="ink">黑白 · 极简经典</option><option value="ivory">暖米 · 纸感编辑</option><option value="lavender">浅紫 · 轻盈创意</option></select>
     <button id="smartFitButton" class="smart-fit-button" aria-pressed="false">智能一页</button><p id="smartFitHint" class="smart-fit-hint">自动平衡留白、行距与字号，增删后持续适配。</p>
     <label class="side-label" for="densitySelect">排版间距</label><select id="densitySelect"><option value="smart">智能一页 · 自动适配</option><option value="auto">自动分页</option><option value="standard">标准</option><option value="compact">紧凑</option><option value="roomy">舒展</option></select>
@@ -1527,7 +1546,7 @@ body{background:#eeefeb;}
   let pages = $('#pages');
 
   function persist() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); status('已自动保存 · 增删与排序均可撤销'); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); status('已保存'); }
     catch { status('本机存储空间不足，当前内容仍可下载 PDF'); }
   }
   function record() {
@@ -1565,12 +1584,12 @@ body{background:#eeefeb;}
   function renderSidebar() {
     if(window.__resumeEditor?.sidebarRenderer){window.__resumeEditor.sidebarRenderer();renderLinks();return;}
     const sidebarScroll=$('.editor-sidebar').scrollTop;
-    if (!blockById(selectedBlock)) selectedBlock=state.blocks[0]?.id;
+    if (!blockById(selectedBlock)) selectedBlock=null;
     $('#themeSelect').value=state.theme; $('#densitySelect').value=state.density;
     renderLinks();
     $('#blockList').innerHTML=state.blocks.map((block,index)=>`<div class="block-card ${block.id===selectedBlock?'active':''}" data-block="${block.id}"><button class="drag-handle" draggable="true" aria-label="拖动${escape(blockLabel(block))}" title="拖动调整顺序">⋮⋮</button><button class="block-select" data-action="select-block" data-block="${block.id}">${escape(blockLabel(block))}</button><button class="mini" data-action="block-up" data-block="${block.id}" aria-label="上移${escape(blockLabel(block))}" ${index===0?'disabled':''}>↑</button><button class="mini" data-action="block-down" data-block="${block.id}" aria-label="下移${escape(blockLabel(block))}" ${index===state.blocks.length-1?'disabled':''}>↓</button><button class="mini danger" data-action="delete-block" data-block="${block.id}" aria-label="删除${escape(blockLabel(block))}">×</button></div>`).join('');
     const block=blockById(selectedBlock);
-    if(!block){ $('#inspector').innerHTML='<p class="side-caption">添加一个板块开始编辑。</p>'; return; }
+    if(!block){ $('#inspector').innerHTML=''; return; }
     const renderRows=(rows,entryId='')=>`<ul class="row-list">${rows.map((item,index)=>`<li><button class="row-pick" data-action="focus-row" data-block="${block.id}" data-entry="${entryId}" data-row="${item.id}" title="点击编辑此行">${escape(text(item.html)||'空白行')}</button><button class="mini danger" data-action="delete-row" data-block="${block.id}" data-entry="${entryId}" data-row="${item.id}" aria-label="删除第${index+1}行">×</button></li>`).join('')}</ul><button class="text-add" data-action="add-row" data-block="${block.id}" data-entry="${entryId}">＋ 增加一行</button>`;
     $('#inspector').innerHTML=`<h3 class="inspector-title">${escape(blockLabel(block))}</h3>` + (block.rows?renderRows(block.rows):block.entries.map((entry,index)=>`<div class="entry-card"><div class="entry-card-head"><span class="entry-name">${escape(text(entry.title||entry.rows[0]?.html)||'新条目')}</span><button class="mini" data-action="entry-up" data-block="${block.id}" data-entry="${entry.id}" aria-label="上移第${index+1}项" ${index===0?'disabled':''}>↑</button><button class="mini" data-action="entry-down" data-block="${block.id}" data-entry="${entry.id}" aria-label="下移第${index+1}项" ${index===block.entries.length-1?'disabled':''}>↓</button><button class="mini danger" data-action="delete-entry" data-block="${block.id}" data-entry="${entry.id}" aria-label="删除第${index+1}项">×</button></div>${renderRows(entry.rows,entry.id)}</div>`).join('')+`<button class="side-add" data-action="add-entry" data-block="${block.id}">＋ ${block.type==='projects'?'新增作品':'新增一条经历'}</button>`);
     const addEntry=$('#inspector [data-action="add-entry"]');
@@ -1583,7 +1602,7 @@ body{background:#eeefeb;}
     el.append(field('h1',block,'name',block.id+':name','name','姓名'),field('p',block,'headline',block.id+':headline','headline','个人简介'));
     block.rows.forEach(item=>el.append(field('div',item,'html',item.id,'meta-row '+item.className,'个人信息')));
     const frame=document.createElement('figure'); frame.className='photo-frame'+(state.photo.empty?' empty':''); frame.id='photoFrame'; frame.style.width=state.photo.width+'mm';frame.style.height=state.photo.width*42/32+'mm';
-    frame.innerHTML=`<div class="photo-viewport" id="photoViewport" tabindex="0" role="button" aria-label="${state.photo.empty?'上传证件照':'更换证件照；拖动可裁切'}"><img class="photo-image" id="photoImage" alt="证件照" draggable="false"><div class="photo-placeholder"><svg viewBox="0 0 96 112" aria-hidden="true"><circle cx="48" cy="32" r="20" fill="currentColor"/><path d="M12 108V91c0-23 16-35 36-35s36 12 36 35v17Z" fill="currentColor"/></svg><span>＋ 上传照片</span><small>点击此处选择</small></div><span class="photo-tip">点击更换 · 拖动裁切</span></div>${state.photo.empty?'':'<button class="photo-remove" type="button" aria-label="删除当前照片" title="删除照片，保留上传位置">×</button>'}`;
+    frame.innerHTML=`<div class="photo-viewport" id="photoViewport" tabindex="0" role="button" aria-label="${state.photo.empty?'上传证件照':'照片设置；拖动可裁切'}"><img class="photo-image" id="photoImage" alt="证件照" draggable="false"><div class="photo-placeholder"><svg viewBox="0 0 96 112" aria-hidden="true"><circle cx="48" cy="32" r="20" fill="currentColor"/><path d="M12 108V91c0-23 16-35 36-35s36 12 36 35v17Z" fill="currentColor"/></svg><span>＋ 上传照片</span></div><span class="photo-tip">设置 · 拖动裁切</span></div>`;
     if(state.photo.src) $('img',frame).src=state.photo.src;
     $('img',frame).style.transform=`translate(${state.photo.x}px,${state.photo.y}px) scale(${state.photo.zoom})`;
     el.append(frame); return el;
@@ -1822,7 +1841,12 @@ body{background:#eeefeb;}
   pages.addEventListener('input',event=>{syncField(event.target.closest('[data-field]'));scheduleInput();});
   pages.addEventListener('compositionstart',()=>composing=true);
   pages.addEventListener('compositionend',()=>{composing=false;scheduleInput();});
-  pages.addEventListener('focusin',event=>{const block=event.target.closest('[data-block]');if(block&&block.dataset.block!==selectedBlock){selectedBlock=block.dataset.block;renderSidebar();highlight();}const el=event.target.closest('[data-field]');if(el)activeField=el.dataset.field;});
+  pages.addEventListener('focusin',event=>{if(event.target.closest('.photo-frame'))return;const block=event.target.closest('[data-block]');if(block&&block.dataset.block!==selectedBlock){selectedBlock=block.dataset.block;renderSidebar();highlight();}const el=event.target.closest('[data-field]');if(el)activeField=el.dataset.field;});
+  $('.workspace').addEventListener('pointerdown',event=>{
+    if(event.target.closest('.photo-frame'))return;
+    const id=event.target.closest('[data-block]')?.dataset.block||null;
+    if(id!==selectedBlock){selectedBlock=id;renderSidebar();highlight();}
+  });
   pages.addEventListener('paste',event=>{
     const el=event.target.closest('[data-field]');if(!el)return;event.preventDefault();record();
     const rich=event.clipboardData.getData('text/html'),plain=event.clipboardData.getData('text/plain');
@@ -1929,6 +1953,10 @@ body{background:#eeefeb;}
       }
     }
     if(!runs.length)return false;
+    if(options.emphasis==='toggle'){
+      const on=!runs.every(run=>run.weight>=600);
+      options={font:on?'title':'default',weight:on?'bold':'normal',tone:on?'accent':'default'};
+    }
     const weight=options.weight==='toggle'?(runs.every(run=>run.weight>=600)?'normal':'bold'):options.weight;
     record();
     for(const run of runs.reverse()){
@@ -1945,7 +1973,7 @@ body{background:#eeefeb;}
     button.addEventListener('mousedown',event=>event.preventDefault());
     button.addEventListener('click',()=>{
       const command=button.dataset.command;if(command==='undo'||command==='redo'){undo(command==='redo');return;}
-      if(command==='bold'){formatText({weight:'toggle'});return;}
+      if(command==='bold'){formatText({emphasis:'toggle'});return;}
       if(command==='removeFormat'){formatText({font:'default',weight:'default',tone:'default'});return;}
       if(!restoreSelection()){status('先选中正文中的文字');return;}record();const edited=selectedFields();
       if(command==='unlink'){
@@ -1961,7 +1989,9 @@ body{background:#eeefeb;}
   $('#linkForm').addEventListener('submit',event=>{event.preventDefault();let url=$('#linkUrl').value.trim();if(!/^[a-z][a-z\d+.-]*:/i.test(url))url='https://'+url;try{const parsed=new URL(url);if(!['http:','https:','mailto:','tel:'].includes(parsed.protocol))throw Error();if(parsed.protocol.startsWith('http')&&!parsed.hostname.includes('.'))throw Error();}catch{$('#linkError').textContent='请输入有效的网址';return;}$('#linkDialog').close();if(!restoreSelection())return;record();const edited=selectedFields();document.execCommand('createLink',false,url);edited.forEach(syncField);record();render();status('链接已添加，单击可打开；选中文字后可取消链接');});
 
   function photoPanel(){ $('#photoPanel').hidden=false;applyPhoto(); }
-  $('#photoButton').addEventListener('click',photoPanel);$('#closePhotoButton').addEventListener('click',()=>$('#photoPanel').hidden=true);
+  $('#photoButton').addEventListener('click',()=>{if($('#photoPanel').hidden)photoPanel();else $('#photoPanel').hidden=true;});$('#closePhotoButton').addEventListener('click',()=>$('#photoPanel').hidden=true);
+  document.addEventListener('pointerdown',event=>{if(!event.target.closest('#photoPanel,#photoButton,.photo-viewport'))$('#photoPanel').hidden=true;});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')$('#photoPanel').hidden=true;});
   $('#replacePhotoButton').addEventListener('click',()=>$('#photoInput').click());
   $('#photoInput').addEventListener('change',async event=>{
     const file=event.target.files?.[0];if(!file)return; if(!/^image\/(png|jpeg|webp)$/.test(file.type)){status('请选择 JPG、PNG 或 WebP 照片');return;}
@@ -1975,11 +2005,12 @@ body{background:#eeefeb;}
   $('#deletePhotoButton').addEventListener('click',deletePhoto);
   let photoMoved=false;
   pages.addEventListener('pointerdown',event=>{const viewport=event.target.closest('.photo-viewport');if(!viewport)return;photoMoved=false;if(state.photo.empty||event.button!==0)return;record();photoDrag={x:event.clientX,y:event.clientY,startX:state.photo.x,startY:state.photo.y};viewport.setPointerCapture(event.pointerId);event.preventDefault();});
-  pages.addEventListener('pointermove',event=>{if(!photoDrag)return;if(Math.hypot(event.clientX-photoDrag.x,event.clientY-photoDrag.y)<4&&!photoMoved)return;photoMoved=true;photoPanel();state.photo.x=Math.max(-140,Math.min(140,photoDrag.startX+event.clientX-photoDrag.x));state.photo.y=Math.max(-180,Math.min(180,photoDrag.startY+event.clientY-photoDrag.y));applyPhoto();});
+  pages.addEventListener('pointermove',event=>{if(!photoDrag)return;if(Math.hypot(event.clientX-photoDrag.x,event.clientY-photoDrag.y)<4&&!photoMoved)return;photoMoved=true;$('#photoPanel').hidden=true;state.photo.x=Math.max(-140,Math.min(140,photoDrag.startX+event.clientX-photoDrag.x));state.photo.y=Math.max(-180,Math.min(180,photoDrag.startY+event.clientY-photoDrag.y));applyPhoto();});
   function stopPhotoDrag(){if(photoDrag){photoDrag=null;record();}}
   pages.addEventListener('pointerup',stopPhotoDrag);pages.addEventListener('pointercancel',stopPhotoDrag);
-  pages.addEventListener('click',event=>{if(event.target.closest('.photo-remove')){deletePhoto();return;}if(event.target.closest('.photo-viewport')&&!photoMoved)$('#photoInput').click();});
-  pages.addEventListener('keydown',event=>{if(event.target.closest('.photo-viewport')&&['Enter',' '].includes(event.key)){event.preventDefault();$('#photoInput').click();}});
+  function activatePhoto(){if(state.photo.empty)$('#photoInput').click();else photoPanel();}
+  pages.addEventListener('click',event=>{if(event.target.closest('.photo-viewport')&&!photoMoved)activatePhoto();});
+  pages.addEventListener('keydown',event=>{if(event.target.closest('.photo-viewport')&&['Enter',' '].includes(event.key)){event.preventDefault();activatePhoto();}});
   pages.addEventListener('wheel',event=>{if(!event.target.closest('.photo-viewport')||state.photo.empty)return;event.preventDefault();state.photo.zoom=Math.max(1,Math.min(2.5,state.photo.zoom+(event.deltaY<0?.05:-.05)));applyPhoto();clearTimeout(inputTimer);inputTimer=setTimeout(record,300);},{passive:false});
   $('#resetButton').addEventListener('click',()=>{if(confirm('恢复最初的简历内容和排版？恢复后仍可点“撤销”找回当前版本。'))change(()=>state=copy(defaultState),'已恢复初始版本，可撤销');});
   window.addEventListener('beforeunload',()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{}});
@@ -2074,8 +2105,7 @@ body{background:#eeefeb;}
   $('label[for="themeSelect"]').textContent='强调色';
   $('label[for="themeSelect"]').insertAdjacentHTML('beforebegin','<label class="side-label" for="layoutSelect">版式布局</label><select id="layoutSelect"><option value="classic">经典纵向 · 清晰留白</option><option value="editorial">编辑感 · 强层级</option><option value="rail">左侧栏 · 信息分区</option><option value="cards">卡片式 · 模块化</option></select>');
   $('#newBlockType').remove();const add=$('[data-action="add-block"]');add.removeAttribute('data-action');add.dataset.v4='library';add.textContent='＋ 添加板块 / 小组件';
-  $('.side-caption').innerHTML='拖动 ⋮⋮ 排序，点击文字编辑。<br>右键或垃圾桶删除，误删可撤销。';
-  $('.document-meta > :last-child').textContent='点击编辑 · 拖拽排序 · 自动保存';
+  $('.document-meta > :last-child')?.remove();
   document.body.insertAdjacentHTML('beforeend',`<div id="v4Dialogs">
     <dialog class="insert-dialog" id="insertDialog" aria-label="添加板块与小组件"><div class="dialog-head"><div><span class="dialog-kicker">选择样式 · 替换示例</span><h3>添加到简历</h3></div><button class="dialog-x" data-v4="close-library" aria-label="关闭组件库">×</button></div><div class="insert-tabs"><button class="active" data-v4="tab" data-tab="widgets">小组件</button><button data-v4="tab" data-tab="blocks">整块模板</button></div><p class="library-intro">下面就是添加后的样式。示例文字已填好，可以直接修改或清空。</p><div class="library-grid" id="widgetLibrary">${Object.entries(widgets).map(([key,[name,desc]])=>`<button class="library-card" data-v4="choose-widget" data-variant="${key}"><span class="template-preview-frame" data-preview-widget="${key}"></span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</div><div class="library-grid" id="blockLibrary" hidden>${Object.entries(types).map(([key,name])=>`<button class="library-card" data-v4="choose-block" data-type="${key}"><span class="template-preview-frame" data-preview-section="${key}"></span><strong>${name}</strong><small>${sectionTemplates[key].description}</small></button>`).join('')}</div></dialog>
     <dialog class="content-dialog" id="contentDialog" aria-label="填写内容"><form id="contentForm"><div class="dialog-head"><div><button type="button" class="form-back" data-v4="back-library" hidden>‹ 返回选择</button><span class="dialog-kicker" id="contentKicker">修改示例 · 自动排版</span><h3 id="contentDialogTitle">新增内容</h3></div><button type="button" class="dialog-x" data-v4="close-content" aria-label="关闭填写窗口">×</button></div><p class="template-note" id="templateNote">以下为示例文字，请按真实情况替换；也可以全部清空后填写。</p><div class="content-workspace"><div id="contentFields"></div><aside class="content-preview-panel"><span class="preview-caption">添加后的样式</span><div class="template-preview-frame live-template-preview" id="contentPreview"></div><p class="preview-tip">内容和日期修改后，这里会同步更新。</p></aside></div><p class="dialog-error" id="contentError" role="alert"></p><div class="dialog-actions"><button type="button" class="action-button" data-v4="close-content">取消</button><button type="submit" class="action-button primary" id="saveContent">添加并排版</button></div></form></dialog>
@@ -2084,10 +2114,10 @@ body{background:#eeefeb;}
     return `<ul class="row-list">${rows.map((r,i)=>`<li class="compact-row" ${data({sort:'row',block:b.id,key:r.id,entry})}>${handle('row',b.id,r.id,entry)}<button class="row-pick" data-v4="edit-row" ${data({block:b.id,key:r.id,entry})} title="编辑这一行">${esc(api.text(r.html)||'空白行')}</button>${bin('row',b.id,r.id,entry,`第${i+1}行`)}</li>`).join('')}</ul><button class="text-add" data-v4="add-row" ${data({block:b.id,entry})}>＋ 增加一行</button>`;
   }
   function sidebar(){
-    const side=$('.editor-sidebar'),scroll=side.scrollTop,state=api.getState();if(!block(api.getSelected()))api.setSelected(state.blocks[0]?.id,false);
+    const side=$('.editor-sidebar'),scroll=side.scrollTop,state=api.getState();if(!block(api.getSelected()))api.setSelected(null,false);
     $('#themeSelect').value=state.theme;$('#densitySelect').value=state.density;$('#layoutSelect').value=state.layout||'classic';const b=block(api.getSelected());
     $('#blockList').innerHTML=state.blocks.map(x=>`<div class="block-card ${x.id===b?.id?'active':''}" ${data({sort:'block',block:x.id,key:x.id})}>${handle('block',x.id,x.id)}<button class="block-select" data-action="select-block" data-block="${x.id}">${esc(label(x))}${x.type==='widget'?'<span class="component-badge">组件</span>':''}</button>${bin('block',x.id,x.id,'',label(x))}</div>`).join('');
-    if(!b){$('#inspector').innerHTML='<p class="side-caption">从组件库添加内容开始。</p>';side.scrollTop=scroll;return;}
+    if(!b){$('#inspector').innerHTML='';side.scrollTop=scroll;return;}
     let out=`<h3 class="inspector-title">${esc(label(b))}</h3>`;
     if(b.type==='widget'){
       out+=`<button class="side-add" data-v4="edit-widget" data-block="${b.id}">编辑组件内容</button>`;
@@ -2618,8 +2648,6 @@ body{background:#eeefeb;}
       const pick = row.querySelector('.row-pick');
       if (pick) {pick.title='点击编辑；按住这一行拖动排序（也可按 Alt + ↑ / ↓）';pick.setAttribute('aria-keyshortcuts','Alt+ArrowUp Alt+ArrowDown');}
     });
-    const caption = document.querySelector('.editor-sidebar > .side-caption');
-    if (caption) caption.innerHTML='个人信息整行可拖动，点击文字编辑。<br>右键或垃圾桶删除，误删可撤销。';
   }
   const previousAfterRender = api.afterRender;
   api.afterRender = () => {
@@ -2678,23 +2706,95 @@ body{background:#eeefeb;}
 <script>
 (() => {
   'use strict';const api=window.__resumeEditor;if(!api)return;
-  const bold=document.querySelector('[data-command="bold"]');bold.textContent='B';bold.style.fontWeight='800';bold.title='加粗 / 取消加粗选中文字';
-  bold.insertAdjacentHTML('afterend','<button type="button" class="tool-button" id="titleTextButton" title="选中文字使用标题字体与强调色">标题字</button><label class="format-control"><select id="fontPicker" aria-label="选中文字的字体"><option value="" disabled selected>选中文字 · 字体</option><option value="default">跟随版式</option><option value="title">标题同款</option><option value="sans">简洁黑体</option><option value="serif">书刊宋体</option><option value="kai">人文楷体</option></select></label>');
-  const picker=document.querySelector('#fontPicker'),titleButton=document.querySelector('#titleTextButton');
-  picker.addEventListener('pointerdown',()=>api.holdSelection());picker.addEventListener('change',()=>{api.formatText({font:picker.value});});
-  titleButton.addEventListener('mousedown',e=>{e.preventDefault();api.holdSelection();});titleButton.addEventListener('click',()=>api.formatText({font:'title',weight:'bold',tone:'accent'}));
+  const bold=document.querySelector('[data-command="bold"]');bold.textContent='B';bold.title='加粗 / 取消加粗';bold.setAttribute('aria-label',bold.title);bold.setAttribute('aria-pressed','false');
+  bold.insertAdjacentHTML('afterend','<label class="format-control"><select id="fontPicker" aria-label="选中文字的字体"><option value="" disabled selected>字体</option><option value="mixed" disabled>多种字体</option><option value="default">跟随版式</option><option value="title">标题同款</option><option value="sans">简洁黑体</option><option value="serif">书刊宋体</option><option value="kai">人文楷体</option></select></label>');
+  const picker=document.querySelector('#fontPicker');let applying=false;
+  picker.addEventListener('pointerdown',()=>api.holdSelection());picker.addEventListener('change',()=>{
+    const chosen=picker.value;applying=true;const applied=api.formatText({font:chosen});if(applied)picker.value=chosen;applying=false;syncSelection();
+  });
   const appearance=document.querySelector('.appearance-controls');
-  appearance.querySelector('.appearance-open-preview').insertAdjacentHTML('beforebegin','<div class="typography-options"><label for="titleFontSelect">标题字体</label><select id="titleFontSelect"><option value="auto">版式推荐</option><option value="sans">简洁黑体 · 清晰利落</option><option value="serif">书刊宋体 · 沉稳雅致</option><option value="kai">人文楷体 · 温和有笔意</option></select><div class="typography-sample" aria-hidden="true">姓名 / 教育背景</div><p>统一应用于姓名、板块标题与经历标题。正文保持易读字体。</p></div>');
+  appearance.querySelector('.appearance-open-preview').insertAdjacentHTML('beforebegin','<div class="typography-options"><label for="titleFontSelect">标题字体</label><select id="titleFontSelect"><option value="auto">版式推荐</option><option value="sans">简洁黑体</option><option value="serif">书刊宋体</option><option value="kai">人文楷体</option></select><div class="typography-sample" aria-hidden="true">姓名 / 教育背景</div></div>');
   const titles=document.querySelector('#titleFontSelect'),sample=document.querySelector('.typography-sample');
   titles.addEventListener('change',()=>api.change(()=>api.getState().titleFont=titles.value,'标题字体已更新，正文与内容保持不变'));
   function sync(){const s=api.getState();titles.value=s.titleFont||'auto';sample.dataset.font=s.titleFont&&s.titleFont!=='auto'?s.titleFont:s.layout==='editorial'?'serif':'sans';}
   const after=api.afterRender;api.afterRender=()=>{after?.();sync();};sync();
-  document.addEventListener('selectionchange',()=>{
-    const sel=window.getSelection();if(!sel?.rangeCount)return;const node=sel.anchorNode?.nodeType===3?sel.anchorNode.parentElement:sel.anchorNode;
-    if(!node?.closest?.('#pages [data-field]'))return;
-    bold.setAttribute('aria-pressed',String(parseInt(getComputedStyle(node).fontWeight)>=600));
-    picker.value=node.closest('[data-font]')?.dataset.font||'';
-  });
+  function syncSelection(){
+    if(applying)return;
+    const sel=window.getSelection();if(!sel?.rangeCount)return;
+    const range=sel.getRangeAt(0),root=document.querySelector('#pages');
+    if(!root.contains(range.commonAncestorContainer))return;
+    const nodes=[];
+    if(range.collapsed){
+      const n=range.startContainer;
+      const child=n.nodeType===3?n:n.childNodes[range.startOffset];
+      const el=child?.nodeType===3?child.parentElement:child||n;
+      if(el?.closest?.('[data-field]'))nodes.push(el);
+    }else{
+      const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;
+      while(node=walker.nextNode()){
+        if(!node.parentElement.closest('[data-field]')||!range.intersectsNode(node))continue;
+        const left=node===range.startContainer?range.startOffset:0,right=node===range.endContainer?range.endOffset:node.length;
+        if(right>left)nodes.push(node.parentElement);
+      }
+    }
+    if(!nodes.length)return;
+    bold.setAttribute('aria-pressed',String(nodes.every(el=>(parseInt(getComputedStyle(el).fontWeight)||400)>=600)));
+    const fonts=new Set(nodes.map(el=>el.closest('[data-font]')?.dataset.font||'default'));
+    picker.value=fonts.size===1?[...fonts][0]:'mixed';
+  }
+  document.addEventListener('selectionchange',syncSelection);
+  bold.addEventListener('click',syncSelection);
+})();
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const api = window.__resumeEditor;
+  if (!api) return;
+  const paths = {
+    undo: '<path d="M3 7v6h6M21 17a8 8 0 0 0-13.5-5.5L3 13"/>',
+    redo: '<path d="M21 7v6h-6M3 17a8 8 0 0 1 13.5-5.5L21 13"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7 .5l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7-.5l-3 3a5 5 0 0 0 7 7l2-2"/>',
+    unlink: '<path d="m9 14-2 2a3.5 3.5 0 0 1-5-5l3-3m10 2 2-2a3.5 3.5 0 0 1 5 5l-3 3M3 3l18 18M9 3v2M3 9h2m14 6h2m-6 4v2"/>',
+    clear: '<path d="m13 4 7 7-9 9H5l-3-3L13 4Zm-6 8 7 7M13 20h8"/>',
+    photo: '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/>',
+    reset: '<path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/>',
+    fit: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M3 8h6m-2-2 2 2-2 2m14 6h-6m2-2-2 2 2 2"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    expand: '<path d="M14 3h7v7M21 3l-8 8M10 21H3v-7m0 7 8-8"/>',
+    close: '<path d="m6 6 12 12M6 18 18 6"/>',
+  };
+  const svg = name => `<svg class="editor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[name]}</svg>`;
+  function button(selector, name, label, iconOnly = true) {
+    const el = document.querySelector(selector);
+    if (!el || (el.dataset.iconName === name && el.querySelector('.editor-icon'))) return;
+    el.dataset.iconName = name;
+    el.classList.add(iconOnly ? 'editor-icon-button' : 'editor-labelled-button');
+    el.title = label;
+    el.setAttribute('aria-label', label);
+    el.innerHTML = svg(name) + (iconOnly ? '' : `<span>${label}</span>`);
+  }
+  button('[data-command="undo"]', 'undo', '撤销');
+  button('[data-command="redo"]', 'redo', '重做');
+  button('#addLinkButton', 'link', '添加链接');
+  button('[data-command="unlink"]', 'unlink', '取消链接');
+  button('[data-command="removeFormat"]', 'clear', '清除格式');
+  button('#photoButton', 'photo', '照片设置');
+  button('#resetButton', 'reset', '恢复初始');
+  button('#closePhotoButton', 'close', '关闭照片设置');
+  const refresh = () => button('#smartFitButton', 'fit', '智能一页', false);
+  const previousAfterRender = api.afterRender;
+  api.afterRender = () => { previousAfterRender?.(); refresh(); };
+  refresh();
+  button('.side-add[data-v4="library"]', 'plus', '板块 / 小组件', false);
+  button('.appearance-open-preview', 'expand', '预览版式', false);
+  document.querySelector('#photoPanel .panel-head > span')?.remove();
+  document.querySelector('#linkManager > .side-caption')?.remove();
+  document.querySelector('.typography-options > p')?.remove();
+  document.querySelector('.appearance-selection-detail')?.remove();
+  // The editor keeps validation and error messages visible; only repeated guidance is hidden.
+  document.querySelectorAll('.library-intro,.preview-tip').forEach(el => el.remove());
 })();
 
 </script>
