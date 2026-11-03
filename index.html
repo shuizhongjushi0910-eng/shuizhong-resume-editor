@@ -1234,60 +1234,6 @@ body{background:#eeefeb;}
 @media(max-width:720px){.appbar .tool-button.editor-icon-button{width:32px;min-width:32px;padding:0;}.appbar .editor-icon{width:18px;height:18px;}.appbar #resetButton.editor-icon-button{display:inline-flex;}}
 
 </style>
-<style id="default-template-style">
-/* One content axis, consistent dates, and a quiet editorial masthead. */
-.paper[data-layout="classic"]{border:0;padding:13mm 14mm 12mm;--ink:#253632;--muted:#6b7873;}
-.paper[data-layout="classic"] .resume-header{padding-bottom:4mm;border-bottom:1.2px solid var(--line);}
-.paper[data-layout="classic"] .name{font-size:28pt;font-weight:800;letter-spacing:.055em;line-height:1.12;color:var(--ink);}
-.paper[data-layout="classic"] .name .en{display:inline-block;margin-left:5mm;font-size:9pt;font-weight:500;line-height:1.5;letter-spacing:.16em;color:var(--muted);vertical-align:baseline;}
-.paper[data-layout="classic"] .headline{margin-top:3mm;font-size:10pt;line-height:1.55;color:var(--accent-dark);letter-spacing:.025em;}
-.paper[data-layout="classic"] .meta-row{margin-top:2mm;gap:1mm 7mm;font-size:8.8pt;line-height:1.55;font-weight:400;color:var(--muted);}
-.paper[data-layout="classic"] .meta-row strong{margin-right:1.6mm;font-weight:600;color:var(--ink);}
-.paper[data-layout="classic"] .meta-row a{font-weight:500;text-decoration-thickness:.6px;text-underline-offset:2px;}
-.paper[data-layout="classic"] .meta-row.availability{gap:0;font-size:8.2pt;}
-.paper[data-layout="classic"] .photo-frame{top:0;}
-.paper[data-layout="classic"] .photo-viewport{border-color:var(--line);border-radius:1mm;box-shadow:none;}
-.paper[data-layout="classic"] .section{margin-top:6.5mm;}
-.paper[data-layout="classic"] .section-title{display:flex;align-items:center;gap:3.2mm;min-height:0;margin:0 0 3mm;padding:0;border:0;font-size:11.2pt;font-weight:700;line-height:1.5;letter-spacing:.09em;color:var(--accent-dark);}
-.paper[data-layout="classic"] .section-title::after{content:"";height:1px;min-width:6mm;flex:1;background:var(--line);}
-.paper[data-layout="classic"] .entry{margin-bottom:3.5mm;}
-.paper[data-layout="classic"] .entry:last-child{margin-bottom:0;}
-.paper[data-layout="classic"] .entry-head{grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:5mm;font-size:10.2pt;line-height:1.5;color:var(--ink);font-weight:700;}
-.paper[data-layout="classic"] .entry-head>[data-field]:first-child{padding-left:3mm;color:var(--ink);}
-.paper[data-layout="classic"] .entry-head>[data-field]:first-child::after{left:.35mm;width:.85mm;height:.85mm;top:.74em;transform:translateY(-50%);}
-.paper[data-layout="classic"] .entry-date{min-width:34mm;max-width:46mm;font-family:Arial,"Microsoft YaHei",sans-serif;font-size:8.8pt;line-height:1.5;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums;white-space:normal;overflow-wrap:anywhere;}
-.paper[data-layout="classic"] .entry-desc{margin-top:1.3mm;font-size:10pt;line-height:1.65;color:var(--ink);}
-.paper[data-layout="classic"] .entry-desc strong{font-weight:600;color:var(--accent-dark);}
-.paper[data-layout="classic"] .bullets{gap:1.5mm;margin-top:1.7mm;font-size:10pt;line-height:1.65;}
-.paper[data-layout="classic"] .bullets li{padding-left:3mm;}
-.paper[data-layout="classic"] .bullets li::after{left:.4mm;top:.8em;width:1mm;height:.3mm;border-radius:0;background:#a4b5ad;transform:translateY(-50%);}
-.paper[data-layout="classic"] .label,.paper[data-layout="classic"] .project-list strong{font-weight:600;color:var(--accent-dark);}
-.paper[data-layout="classic"] .project-list{gap:1.5mm;margin-top:0;font-size:10pt;line-height:1.65;}
-.paper[data-layout="classic"] .project-list li{padding:.2mm 0 .2mm 3mm;}
-.paper[data-layout="classic"] .project-list li::after{left:.4mm;top:calc(.2mm + .8em);width:.8mm;height:.8mm;background:var(--secondary);}
-.paper[data-layout="classic"] .portfolio-bar{justify-content:flex-start;min-height:8mm;margin-top:3mm;padding:1.5mm 3mm;border:0;border-left:2px solid var(--secondary);border-radius:0;background:var(--accent-soft);font-size:8.4pt;font-weight:600;text-align:left;text-decoration:none;}
-.paper[data-layout="classic"] .summary{margin-top:5mm;padding:3mm 0 0;border:0;border-top:1px solid var(--line);background:transparent;color:var(--muted);font-size:8.3pt;line-height:1.65;text-align:left;}
-.paper[data-layout="classic"] .summary strong{color:var(--accent-dark);font-weight:600;}
-.paper[data-layout="classic"][data-density="compact"] .section{margin-top:4mm;}
-.paper[data-layout="classic"][data-density="compact"] .section-title{margin-bottom:2mm;}
-.paper[data-layout="classic"][data-density="compact"] .entry{margin-bottom:2.7mm;}
-.paper[data-layout="classic"][data-density="compact"] .bullets,.paper[data-layout="classic"][data-density="compact"] .project-list{gap:.9mm;line-height:1.55;}
-.paper[data-layout="classic"][data-density="smart"]{padding:calc(var(--fit-pad-y) + 2mm) calc(var(--fit-pad-x) + 3mm);}
-.paper[data-layout="classic"][data-density="smart"] .resume-header{padding-bottom:var(--fit-panel-pad);}
-.paper[data-layout="classic"][data-density="smart"] .name .en{font-size:.33em;}
-.paper[data-layout="classic"][data-density="smart"] .meta-row{font-size:calc(var(--fit-body)*.88);}
-.paper[data-layout="classic"][data-density="smart"] .meta-row.availability{font-size:calc(var(--fit-body)*.82);}
-.paper[data-layout="classic"][data-density="smart"] .section-title{min-height:0;font-size:calc(var(--fit-heading)*.8);margin-bottom:var(--fit-title-gap);padding:0;line-height:1.5;}
-.paper[data-layout="classic"][data-density="smart"] .entry-head{font-size:var(--fit-subheading);line-height:1.5;}
-.paper[data-layout="classic"][data-density="smart"] .entry-date{font-size:var(--fit-date);}
-.paper[data-layout="classic"][data-density="smart"] .entry-desc,.paper[data-layout="classic"][data-density="smart"] .bullets,.paper[data-layout="classic"][data-density="smart"] .project-list{line-height:var(--fit-line);}
-.paper[data-layout="classic"][data-density="smart"] .bullets li::after{top:var(--fit-marker-y);}
-.paper[data-layout="classic"][data-density="smart"] .project-list li::after{top:calc(var(--fit-project-pad) + var(--fit-marker-y));}
-.paper[data-layout="classic"][data-density="smart"] .portfolio-bar{min-height:var(--fit-bar-height);padding:1.5mm 3mm;font-size:calc(var(--fit-body)*.84);}
-.paper[data-layout="classic"][data-density="smart"] .summary{padding:calc(var(--fit-panel-pad)*.75) 0 0;text-align:left;font-size:calc(var(--fit-body)*.83);}
-.document-meta>span:last-child{font-size:10px;color:#8a9690;}
-
-</style>
 </head>
 <body>
   <header class="appbar" aria-label="简历编辑工具栏">
@@ -1814,13 +1760,6 @@ body{background:#eeefeb;}
     for(const[key,args]of Object.entries({'body':[9.2,9.2,8.5],'heading':[15,15,13],'subheading':[10,10,9.3],'date':[8.7,8.7,8.2],'name':[28,28,25],'headline':[10.4,10.4,9.5],'metric':[18,18,16]}))paper.style.setProperty('--fit-'+key,blend(...args).toFixed(3)+'pt');
     paper.style.setProperty('--fit-line',blend(1.46,1.38,1.32).toFixed(3));
     paper.style.setProperty('--fit-marker-y',(.5*blend(1.46,1.38,1.32)).toFixed(3)+'em');
-    if(paper.dataset.layout==='classic'){
-      const spacingValues={'pad-y':[11,8.8,8],'pad-x':[11,10,9],'section-gap':[6.5,3.1,2.2],'entry-gap':[3.5,2.2,1.5],'title-gap':[3,2,1.4],'row-gap':[1.5,.9,.65],'desc-gap':[1.3,.9,.7],'list-top':[1.7,1.1,.8],'project-pad':[.2,.15,.1],'headline-gap':[3,2.4,2.1],'meta-gap':[2,1.5,1.2],'panel-pad':[4,2.4,1.8],'bar-height':[8,7.5,7],'bar-gap':[3,2,1.5]};
-      for(const[key,args]of Object.entries(spacingValues))paper.style.setProperty('--fit-'+key,blend(...args).toFixed(3)+'mm');
-      for(const[key,args]of Object.entries({'body':[10,10,9.2],'heading':[14,14,13],'subheading':[10.2,10.2,9.5],'date':[8.8,8.8,8.2],'headline':[10,10,9.5]}))paper.style.setProperty('--fit-'+key,blend(...args).toFixed(3)+'pt');
-      paper.style.setProperty('--fit-line',blend(1.65,1.48,1.4).toFixed(3));
-      paper.style.setProperty('--fit-marker-y',(.5*blend(1.65,1.48,1.4)).toFixed(3)+'em');
-    }
     paper.dataset.fitLevel=level.toFixed(3);
   }
   function fitOnePage() {
@@ -2713,7 +2652,7 @@ body{background:#eeefeb;}
 (() => {
   'use strict';
   const api=window.__resumeEditor;if(!api)return;
-  const layouts=[{id:'classic',name:'清序',detail:'轻量页眉 · 统一对齐'},{id:'editorial',name:'书刊',detail:'衬线姓名 · 精细横线'},{id:'cards',name:'柔卡',detail:'柔和标题 · 圆角分区'},{id:'ledger',name:'对照',detail:'左侧索引 · 右侧内容'},{id:'inkline',name:'墨印',detail:'深色题签 · 细线节奏'}];
+  const layouts=[{id:'classic',name:'经典',detail:'清晰线条 · 全宽正文'},{id:'editorial',name:'书刊',detail:'衬线姓名 · 精细横线'},{id:'cards',name:'柔卡',detail:'柔和标题 · 圆角分区'},{id:'ledger',name:'对照',detail:'左侧索引 · 右侧内容'},{id:'inkline',name:'墨印',detail:'深色题签 · 细线节奏'}];
   const themes=[{id:'teal',name:'松石与雾',detail:'青绿 × 石灰'},{id:'blue',name:'深海与铜',detail:'深蓝 × 铜金'},{id:'ivory',name:'酒红与纸',detail:'莓红 × 暖棕'},{id:'olive',name:'苔原与砂',detail:'橄榄 × 陶土'},{id:'plum',name:'鸢尾与雨',detail:'灰紫 × 雾蓝'}];
   const layout=document.querySelector('#layoutSelect'),theme=document.querySelector('#themeSelect');
   layout.innerHTML=layouts.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');theme.innerHTML=themes.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
