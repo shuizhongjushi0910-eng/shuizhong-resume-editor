@@ -1305,6 +1305,10 @@ body{background:#eeefeb;}
 .symbol-option{display:grid;place-items:center;height:44px;padding:0;border:1px solid #e2e8df;border-radius:7px;background:white;color:#354f42;font-family:"Segoe UI Symbol","Microsoft YaHei",sans-serif!important;font-size:23px!important;line-height:1;}
 .symbol-option:hover,.symbol-close:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-dark);}
 .symbol-panel button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.pdf-name-dialog{width:min(480px,calc(100vw - 32px));box-sizing:border-box;}
+.pdf-filename-input{display:flex;align-items:center;gap:10px;}
+.pdf-filename-input input{min-width:0;flex:1;}
+.pdf-filename-input>span{color:#839087;font-size:14px;flex:0 0 auto;}
 @media(max-width:720px){.appbar .toolset{max-width:100%;}.appbar #symbolButton{width:31px;}.symbol-panel{padding:13px;}}
 @media print{.symbol-panel{display:none!important;}}
 .exporting .symbol-panel{display:none!important;}
@@ -2147,7 +2151,23 @@ body{background:#eeefeb;}
     for(let i=1;i<objects.length;i++){offsets.push(size);const chunk=concat([enc(`${i} 0 obj\n`),objects[i],enc('\nendobj\n')]);chunks.push(chunk);size+=chunk.length;}
     chunks.push(enc(`xref\n0 ${objects.length}\n0000000000 65535 f \n${offsets.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n \n').join('')}trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${size}\n%%EOF`));return concat(chunks);
   }
-  $('#exportButton').addEventListener('click',async()=>{
+  document.body.insertAdjacentHTML('beforeend','<dialog class="link-dialog pdf-name-dialog" id="pdfNameDialog"><form id="pdfNameForm"><h3>下载 PDF</h3><label for="pdfFileName">文件名</label><div class="pdf-filename-input"><input id="pdfFileName" type="text" maxlength="100" autocomplete="off" required aria-describedby="pdfNameError"><span>.pdf</span></div><p class="dialog-error" id="pdfNameError" aria-live="polite"></p><div class="dialog-actions"><button type="button" class="action-button" id="cancelPdfName">取消</button><button type="submit" class="action-button primary">下载</button></div></form></dialog>');
+  function suggestedPdfName(){
+    const name=text(state.blocks.find(block=>block.type==='header')?.name||'我的').replace(/\s+/g,' ').slice(0,32);
+    const layout=$('#layoutSelect')?.selectedOptions[0]?.textContent||'经典';
+    const date=new Date(),stamp=String(date.getFullYear())+String(date.getMonth()+1).padStart(2,'0')+String(date.getDate()).padStart(2,'0');
+    return `${name}_简历_${layout}_${stamp}`.replace(/[<>:"/\\|?*\x00-\x1F]/g,'_');
+  }
+  $('#exportButton').addEventListener('click',()=>{
+    if(exporting)return;$('#photoPanel').hidden=true;$('#pdfFileName').value=suggestedPdfName();$('#pdfNameError').textContent='';$('#pdfNameDialog').showModal();$('#pdfFileName').focus();$('#pdfFileName').select();
+  });
+  $('#cancelPdfName').addEventListener('click',()=>$('#pdfNameDialog').close());
+  $('#pdfNameForm').addEventListener('submit',event=>{
+    event.preventDefault();const name=$('#pdfFileName').value.trim().replace(/(?:\.pdf)+$/i,'').replace(/[. ]+$/,'');
+    if(!name||/[<>:"/\\|?*\x00-\x1F]/.test(name)||/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(name)){$('#pdfNameError').textContent='请输入有效文件名，请勿包含 \\ / : * ? " < > |';return;}
+    $('#pdfNameDialog').close();downloadPdf(name+'.pdf');
+  });
+  async function downloadPdf(filename){
     if(exporting)return;record();clearTimeout(layoutTimer);$('#photoPanel').hidden=true;document.activeElement?.blur();render();
     if(layoutOverflow){status('暂未导出：请先拆分超长段落，避免 PDF 截断');$('#layoutWarning').scrollIntoView({block:'center'});return;}
     exporting=true;$('.editor-layout').inert=true;$('.appbar').inert=true;
@@ -2161,9 +2181,9 @@ body{background:#eeefeb;}
         const canvas=await html2canvas(paper,{scale:3,backgroundColor:getComputedStyle(paper).backgroundColor,useCORS:true,logging:false,onclone(doc){doc.body.classList.add('exporting');$$('.paper',doc).forEach(el=>{el.style.boxShadow='none';});}});
         const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('图像生成失败')),'image/jpeg',.97));images.push({bytes:new Uint8Array(await blob.arrayBuffer()),width:canvas.width,height:canvas.height,links});canvas.width=canvas.height=1;
       }
-      const url=URL.createObjectURL(new Blob([makePdf(images)],{type:'application/pdf'}));const link=document.createElement('a');link.href=url;link.download='我的简历.pdf';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);status(`已下载 ${images.length} 页 A4 PDF`);
+      const url=URL.createObjectURL(new Blob([makePdf(images)],{type:'application/pdf'}));const link=document.createElement('a');link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);status(`已下载 ${images.length} 页 A4 PDF`);
     }catch(error){console.error(error);status('PDF 生成失败，请重试');}finally{exporting=false;$('.editor-layout').inert=false;$('.appbar').inert=false;button.disabled=false;button.textContent='下载 PDF';document.body.classList.remove('exporting');}
-  });
+  }
   window.__resumeEditor={getState:()=>state,change,render,record,undo,field,clean,formatDescription,previewBlock,previewDocument,text,row,uid,blockById,status,focusField,formatText,alignText,insertText,holdSelection:()=>clearTimeout(layoutTimer),isExporting:()=>exporting,getSelected:()=>selectedBlock,setSelected:(id,redraw=true)=>{selectedBlock=id;if(redraw){renderSidebar();highlight();}}};
   render();record();
 })();
